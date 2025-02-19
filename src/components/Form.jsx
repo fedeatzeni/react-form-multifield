@@ -1,13 +1,13 @@
 import { useState } from "react";
 
 const startList = [
-    { id: 1, title: "primo", author: "a", content: "qualcosa", category: "a" },
-    { id: 2, title: "secondo", author: "b", content: "qualcosa", category: "b" },
-    { id: 3, title: "terzo", author: "b", content: "qualcosa", category: "c" },
+    { id: 1, title: "primo", author: "a", content: "qualcosa", category: "a", public: true },
+    { id: 2, title: "secondo", author: "b", content: "qualcosa", category: "b", public: true },
+    { id: 3, title: "terzo", author: "b", content: "qualcosa", category: "c", public: true },
 ]
 
 export default function Form() {
-    const initialFormData = { title: "", author: "", content: "", category: "" }
+    const initialFormData = { title: "", author: "", content: "", category: "", public: "" }
 
     // stati lista 
     const [articles, setArticles] = useState(startList);
@@ -34,7 +34,9 @@ export default function Form() {
 
     // aggiunge proprietà all'oggetto
     function handleFormData(event) {
-        setNewArticle((current) => ({ ...current, [event.target.name]: event.target.value }))
+        // valuta che tipo di input è 
+        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value
+        setNewArticle((current) => ({ ...current, [event.target.name]: value }))
     }
 
     return (
@@ -52,21 +54,28 @@ export default function Form() {
                     placeholder="inserire l'autore"
                     onChange={handleFormData} />
 
-                <textarea 
-                value={newArticle.content}
-                name="content"
-                placeholder="inserire il contenuto"
-                onChange={handleFormData}></textarea>
+                <textarea
+                    value={newArticle.content}
+                    name="content"
+                    placeholder="inserire il contenuto"
+                    onChange={handleFormData}></textarea>
 
-            <input type="text"
-                value={newArticle.category}
-                name="category"
-                placeholder="inserire la categoria"
-                onChange={handleFormData} />
+                <input type="text"
+                    value={newArticle.category}
+                    name="category"
+                    placeholder="inserire la categoria"
+                    onChange={handleFormData} />
 
+                <label htmlFor="public">Pubblicato</label>
+                <input type="checkbox"
+                    checked={newArticle.public}
+                    id="public"
+                    name="public"
+                    placeholder="inserire la categoria"
+                    onChange={handleFormData} />
 
-            <button>Invia</button>
-        </form >
+                <button>Invia</button>
+            </form >
 
             <div>
                 {articles.map((el) =>
@@ -76,6 +85,7 @@ export default function Form() {
                         <div>{el.author}</div>
                         <div>{el.content}</div>
                         <div>{el.category}</div>
+                        {el.public ? "Pubblico" : "Da pubblicare"}
                         <button onClick={() => removeArticle(el.id)}>elimina</button>
                     </div>
                 )}
